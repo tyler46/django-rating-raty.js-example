@@ -1,5 +1,5 @@
 *.py[cod]
-*/settings/settings_local.py
+*/settings/local.py
 # Installer logs
 pip-log.txt
 
