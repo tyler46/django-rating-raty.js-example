@@ -1,0 +1,10 @@
+Django==1.5.1
+South==0.7.6
+Unidecode==0.04.12
+argparse==1.2.1
+distribute==0.6.24
+django-uuslug==1.0.0
+psycopg2==2.5
+python-slugify==0.0.4
+pytz==2013b
+wsgiref==0.1.2
