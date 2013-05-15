@@ -49,7 +49,7 @@ class Rating(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self_date_rated = timezone.now()
+            self.date_rated = timezone.now()
         super(Rating, self).save(*args, **kwargs)
 
 
