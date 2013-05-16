@@ -53,7 +53,10 @@ class Show(models.Model):
         """Returns latest rating for a show.
         (instance of Rating)
         """
-        return self.rated_show.all().order_by('-date_rated')[0]
+        if self.rated_show.all():
+            return self.rated_show.all().order_by('-date_rated')[0]
+        else:
+            return None
 
     def get_rating_votes(self):
         """Returns all rating votes for a show."""
