@@ -6,6 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
+    url(r'^demos/', include('circus.demos.urls')),
     # url(r'^$', 'circus.views.home', name='home'),
     # url(r'^circus/', include('circus.foo.urls')),
 

@@ -2,6 +2,7 @@ import django.utils.timezone as timezone
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg, Count
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -14,6 +15,15 @@ RATING_CHOICES = (
     (3, 'regular'),
     (4, 'good'),
     (5, 'gorgeus'),)
+
+
+class ShowManager(models.Manager):
+    """Adds custom methods to Show model."""
+    def top_rated(self):
+        return self.annotate(score=Avg('rated_show__rating')).order_by('-score')
+
+    def most_rated(self):
+        return self.annotate(score=Avg('rated_show')).order_by('-score')
 
 
 class Show(models.Model):
@@ -32,8 +42,27 @@ class Show(models.Model):
         """Show unicode representation."""
         return self.title
 
+    def get_avg_rating(self):
+        """Returns the average rating for a show."""
+        if self.rated_show.all():
+            return self.rated_show.aggregate(Avg('rating'))['rating__avg']
+        else:
+            return 0.00
+
+    def get_latest_rating(self):
+        """Returns latest rating for a show.
+        (instance of Rating)
+        """
+        return self.rated_show.all().order_by('-date_rated')[0]
+
+    def get_rating_votes(self):
+        """Returns all rating votes for a show."""
+        return self.rated_show.all().count()
+
     class Meta:
         ordering = ['start']
+
+    objects = ShowManager()
 
 
 class Rating(models.Model):
