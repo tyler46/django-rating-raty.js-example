@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}- List of Shows{% endblock %}
+
+
+{% block content %}
+
+<div id="container">
+    {% if shows|length > 0 %}
+    <ul>
+        {% for show in shows %}
+        <li>
+            <h5>{{ show.title }}</h5>
+            <p><a href="{% url 'demos_view_show' show.slug %}">Check more about it</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No show for this circus yet.</p>
+    {% endif %}
+</div>
+
+
+{% endblock %}

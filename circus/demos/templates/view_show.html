@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block pagetitle %} - {{ show.title }} {% endblock %}
+{% block headextra %}
+
+    <script src="{{ STATIC_URL }}demos/js/jquery.raty.min.js"></script>
+    <script src="{{ STATIC_URL }}demos/js/csrf_ajax.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.fn.raty.defaults.path = "{{ STATIC_URL }}demos/img";
+            $.fn.raty.defaults.size = 24;
+            $.fn.raty.defaults.starOff = "star-off-big.png";
+            $.fn.raty.defaults.starOn = "star-on-big.png";
+            $.fn.raty.defaults.starHalf = "star-half-big.png";
+            $.fn.raty.defaults.half = true;
+            $.fn.raty.defaults.single = false;
+            $('#overall_rating').raty({
+                target: '.overall_target',
+                targetKeep: true,
+                targetType: "number",
+                targetFormat: '({score}) <small>based on {{ votes }} votes</small>',
+                readOnly: true,
+                showHalf: true,
+                score: {{ show.get_avg_rating|floatformat }} || 0
+            });
+            $('#user_rating').raty({
+                half: false,
+                score: function() {
+                    return $(this).attr('data-score');
+                },
+                click: function(score, evt) {
+                    var current_rating = 0;
+                    if (score != null) {
+                        current_rating = score;
+                    }
+                    var rate_url = "rate/?rating=" + score;
+                    console.log('Score', score, rate_url);
+                    $.ajax({
+                        url: rate_url,
+                        type: "POST",
+                        data: { "rating": current_rating },
+                        statusCode: {
+                            403: function(jqXHR, textStatus, errorThrown) {
+                                // invalid rating was posted
+                                console.log(errorThrown);
+                            },
+                            200: function(data, textStatus, jqXHR) {
+                                var scoring = data["overall_rating"];
+                                console.log(scoring);
+                                var votes = data["number_of_votes"] || 0;
+                                $('#overall_rating').raty('set', {readOnly: false, score: scoring });
+                                $('#overall_rating').raty('set', {readOnly: true });
+                                $('.overall_target').text('('+data["overall_rating"]+')').append('<small> based on '+votes+' votes </small>');
+                            }
+                        }
+                    });
+                },
+                cancel: false
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+{% load show_tags %}
+
+        <h4>{{ show.title }}</h4>
+
+        <div>
+            <p><strong>Description</strong>: {{ show.description }}</p>
+
+            {% if user.is_authenticated %}
+            <!-- Rating stuff here -->
+            <div>
+                <p>My Rating:</p>
+                {% if_rated user show %}
+                    <div id="user_rating" data-score="{{ user_rating }}">
+                    </div>
+                {% else %}
+                    <div id="user_rating">
+                    </div>
+                {% endif_rated %}
+            </div>
+
+            <!-- Average Rating -->
+            <div>
+                <p>Average:</p>
+                <div id="overall_rating">
+                </div>
+            </div>
+
+            <!-- Based on -->
+            <div>
+                <p class="overall_target"></p>
+            </div>
+
+            <hr>
+
+            {% endif %}
+        </div>
+
+{% endblock %}

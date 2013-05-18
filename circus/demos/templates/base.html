@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Circus{% block pagetitle %} {% endblock %}
+        </title>
+
+        <!-- Javascript -->
+        <script src="{{ STATIC_URL }}demos/js/jquery-1.9.1.min.js"></script>
+        {% block headextra %}{% endblock %}
+    </head>
+
+    <body>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>
