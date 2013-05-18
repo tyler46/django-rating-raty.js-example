@@ -17,13 +17,13 @@ def view_show(request, slug):
     """View show view."""
     show = get_object_or_404(Show, slug=slug)
 
-    if show.rated_show.filter(user=request.user):
+    if show.rated_show.filter(user=request.user.id):
         user_rating = show.rated_show.filter(
-            user=request.user)[0].rating
+            user=request.user.id)[0].rating
     else:
         user_rating = 0
 
-    return render(requst, 'view_show.html',
+    return render(request, 'view_show.html',
                   {'show': show,
                    'votes': show.get_rating_votes(),
                    'user_rating': user_rating})
@@ -48,8 +48,8 @@ def rate_show(request, slug):
             rating = Rating(user=request.user, show=show)
         rating.rating = rating_input
         rating.save()
-        show_overall_rating = 0
-        data['overal_rating'] = round(show_overall_rating, 1)
+        show_overall_rating = show.get_avg_rating()
+        data['overall_rating'] = round(show_overall_rating, 1)
         data['number_of_votes'] = show.get_rating_votes()
 
     return HttpResponse(json.dumps(data), mimetype='application/json')
