@@ -1,0 +1,19 @@
+# from base import *
+
+# DEBUG = True
+# TEMPLATE_DEBUG = DEBUG
+
+# INTERNAL_IPS = ('127.0.0.1', )
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.',
+#         'NAME': '',
+#         'USER': '',
+#         'PASSWORD': '',
+#         'HOST': '',
+#     }
+# }
+
+# Add you secret key
+# SECRET_KEY = 'some-private-key'
